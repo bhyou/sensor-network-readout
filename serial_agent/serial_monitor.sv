@@ -5,7 +5,7 @@
  > Mail        : bhyou@foxmail.com 
  > Created Time: Fri 16 Jul 2021 10:09:26 AM CST
  ************************************************************************/
-`include "defines.sv"
+`include "serial_defines.sv"
  
 class serial_monitor;
     virtual serial_inf.monitor     monitorInf;
@@ -28,7 +28,7 @@ class serial_monitor;
     endtask // receive_a_flit
 
 
-    task automatic receive_a_frame(output logic senderRdy, receiverRdy, logic [`flitWidth-1:0] flit);
+    task automatic receive_a_frame(output logic frameFmt, senderRdy,receiverRdy, logic [`flitWidth-1:0] flit);
         bit                    isStart;
         bit                    isStop ;
         // frame format: 0 --> exchange ready status; 1 --> exchange data 
@@ -40,7 +40,8 @@ class serial_monitor;
             receive_a_bit(frameFmt);
             if(frameFmt == `InfoFormat) begin 
                 receive_a_bit(senderRdy);
-                receive_a_bit(receiverRdy)；
+                receive_a_bit(receiverRdy);
+                flitTmp = {senderRdy,receiverRdy, {`flitWidth-2{1'b0}}};
             end else begin
                 receive_a_flit(flitTmp);
             end
@@ -54,8 +55,39 @@ class serial_monitor;
         end
     endtask // receive_a_frame
 
-    task automatic receive_a_pkt();
+    task serial_pkt receive_a_packet(output logic senderRdy, receiverRdy);
+        serial_pkt  recvPkt = new;
+        logic [`flitWidth-1:0] flitTmp;
+        logic                  frameFmt;
+        int                    index   ;
+
+        forever begin 
+            receive_a_flit(frameFmt, flitTmp, senderRdy,receiverRdy);
+            if(frameFmt != `InfoFrame) begin
+                if(flitTmp[(`flitWidth-1) -: 2]==`SoF_flag) begin
+                    index = 0;
+                    recvPkt.destX = flitTmp[`flitWidth-3 -: `addrWidth];
+                    recvPkt.destY = flitTmp[`flitWidth-`addrWidth-3 -: `addrWidth];
+                    recvPkt.networkID = flitTmp[`flitWidth-2*`addrWidth-3];
+                    recvPkt.packetType = flitTmp[`flitWidth-2*`addrWidth-4 -: `pktTpWidth];
+                end else if(flitTmp[`flitWidth-1 -:2] == `EoF_flag)begin
+                    recvPkt.sourceX = flitTmp[`flitWidth-3 -: `addrWidth];
+                    recvPkt.sourceY = flitTmp[`flitWidth-`addrWidth-3 -:`addrWidth];
+                    recvPkt.timeStampe = flitTmp[`flitWidth-`addrWidth*2-3:0];
+                    outBox.put(recvPkt);
+                end else begin
+                    if(flitTmp[`flitWidth-1 -: 2]==0) begin
+                        recvPkt.padload[index] = flitTmp[27:0];
+                        index ++;
+                    end else begin
+                        $fatal("the format of received pakcet is error!")
+                    end
+                end
+            end else begin
+                $warnig("the format of received pakcet is info frame!");
+            end
+        end
         
-    endtask // receive_a_pkt
+    endtask
 
 endclass

@@ -44,7 +44,7 @@ class serial_driver;
     task automatic transmit_a_frame (input bit senderRdy, receiverRdy, frameFmt, input bit[29:0] flit);
         transmit_a_bit(`StartBit);
         transmit_a_bit(frmaeFmt);  // frame format bit
-        if(frameFmt == `InfoFormat) begin 
+        if(frameFmt == `InfoFrame) begin 
             transmit_status_info(senderRdy, receiverRdy);
         end
         else begin
