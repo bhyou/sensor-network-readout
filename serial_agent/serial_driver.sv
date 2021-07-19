@@ -66,7 +66,7 @@ class serial_driver;
             flitTmp = {2'b00,drv_pkt.payload[index]};
             transmit_a_frame(senderRdy, receiverRdy, frameFmt, flitTmp);
         end
-        flitTmp = drv_pkt.get_head_flit();
+        flitTmp = drv_pkt.get_tail_flit();
         transmit_a_frame(senderRdy, receiverRdy, frameFmt, flitTmp);
     endtask 
 
