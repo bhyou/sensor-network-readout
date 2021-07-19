@@ -16,19 +16,19 @@ class serial_monitor;
         this.outBox = outBox;
     endfunction
 
-    task automatic receive_a_bit(output bit bitVal);
+    virtual task automatic receive_a_bit(output bit bitVal);
         @(posedge monitorInf.clk)
         bitVal = monitorInf.serial_rx;
     endtask // receive_a_bit
 
-    task automatic receive_a_flit(output logic [`flitWidth-1:0] flit);
+    virtual task automatic receive_a_flit(output logic [`flitWidth-1:0] flit);
         for(int idx = `flitWidth; idx > 0, idx --) begin 
             receive_a_bit(flit[idx-1]); 
         end
     endtask // receive_a_flit
 
 
-    task automatic receive_a_frame(output logic frameFmt, senderRdy,receiverRdy, logic [`flitWidth-1:0] flit);
+    virtual task automatic receive_a_frame(output logic frameFmt, senderRdy,receiverRdy, logic [`flitWidth-1:0] flit);
         bit                    isStart;
         bit                    isStop ;
         // frame format: 0 --> exchange ready status; 1 --> exchange data 
@@ -55,7 +55,7 @@ class serial_monitor;
         end
     endtask // receive_a_frame
 
-    task serial_pkt receive_a_packet(output logic senderRdy, receiverRdy);
+    virtual task serial_pkt receive_a_packet(output logic senderRdy, receiverRdy);
         serial_pkt  recvPkt = new;
         logic [`flitWidth-1:0] flitTmp;
         logic                  frameFmt;

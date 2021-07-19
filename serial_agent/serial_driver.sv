@@ -18,12 +18,12 @@ class serial_driver;
         this.driverInf        = driverInf;
     endfunction //new()
 
-    task automatic transmit_a_bit(input bit bitValue);
+    virtual task automatic transmit_a_bit(input bit bitValue);
         mcb.serial_tx = bitValue;
         @(mcb);
     endtask 
 
-    task automatic transmit_a_flit(input bit[`flitWidth-1:0]  flit);
+    virtual task automatic transmit_a_flit(input bit[`flitWidth-1:0]  flit);
        for(int item=`flitWidth-1; item>=0; item=item-1) begin
             transmit_a_bit(flit[item]);
             if(`TRACE_LOW) 
@@ -31,7 +31,7 @@ class serial_driver;
        end
     endtask 
 
-    task automatic transmit_status_info(input bit senderIsReady, receiverIsReady);
+    virtual task automatic transmit_status_info(input bit senderIsReady, receiverIsReady);
         transmit_a_bit(senderIsReady);
         transmit_a_bit(receiverIsReady);
 
@@ -41,7 +41,7 @@ class serial_driver;
         end
     endtask // transmit_status_info
 
-    task automatic transmit_a_frame (input bit senderRdy, receiverRdy, frameFmt, input bit[29:0] flit);
+    virtual task automatic transmit_a_frame (input bit senderRdy, receiverRdy, frameFmt, input bit[29:0] flit);
         transmit_a_bit(`StartBit);
         transmit_a_bit(frmaeFmt);  // frame format bit
         if(frameFmt == `InfoFrame) begin 
@@ -54,7 +54,7 @@ class serial_driver;
     endtask // send_a_flit 
 
 
-    task automatic transmit_a_packet(input bit senderRdy, receiverRdy, frameFmt);
+    virtual task automatic transmit_a_packet(input bit senderRdy, receiverRdy, frameFmt);
         serail_pkt               drv_pkt;
         logic [`flitWidth-1:0]   flitTmp;
 

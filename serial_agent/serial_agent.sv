@@ -35,7 +35,7 @@ class serial_agent;
         serMon = new(mon2scb,monInf);
     endtask
 
-    task automatic test(arguments);
+    task automatic test();
         bit    receiverRdy;
         bit    senderRdy  ;
         bit    frameFmt   ;
@@ -50,7 +50,5 @@ class serial_agent;
         #1000;
         $stop;
     endtask
-
-
 endclass
 
