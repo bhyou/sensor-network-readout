@@ -5,7 +5,7 @@
  > Mail        : bhyou@foxmail.com 
  > Created Time: Mon 19 Jul 2021 02:37:25 PM CST
  ************************************************************************/
-`include "router_defines.sv"
+`include "defines.vh"
 
 class router_monitor;
     virtual router_inf.cb  monInf;

@@ -6,7 +6,10 @@
  > Created Time: Fri 16 Jul 2021 01:30:34 PM CST
  ************************************************************************/
  
-`include "serial_define.sv"
+`include "defines.vh"
+`include "serial_generator.sv"
+`include "serial_driver.sv"
+`include "serial_monitor.sv"
 
 class serial_agent;
 
@@ -22,7 +25,7 @@ class serial_agent;
 
     function new(virtual serial_inf.master drvInf, virtual serial_inf.monitor monInf);
         this.drvInf = drvInf;
-        this.monInf = monInf
+        this.monInf = monInf;
     endfunction
 
     task automatic pre_test();

@@ -6,7 +6,9 @@
  > Created Time: Mon 19 Jul 2021 03:33:54 PM CST
  ************************************************************************/
  
-`include "router_defines.sv"
+`include "defines.vh"
+`include "router_driver.sv"
+`include "router_generator.sv"
 
 class router_agent;
 
@@ -15,10 +17,10 @@ class router_agent;
 
     mailbox                    gen2drv;
     mailbox                    drv2scb;
-    mailbox                    mon2scb;
+//    mailbox                    mon2scb;
 
     router_driver              drv;
-    router_monitor             mon;
+//    router_monitor             mon;
     router_generator           gen;
     
     function new(virtual router_inf.drv drvInf, virtual router_inf.mon monInf);
@@ -31,7 +33,7 @@ class router_agent;
         mon2scb = new();
         drv2scb = new();
         drv = new(drvInf, gen2drv, drv2scb);
-        mon = new(mon2scb);
+//        mon = new(mon2scb);
     endtask //automatic pre_test()
 
     task automatic test();
@@ -42,6 +44,5 @@ class router_agent;
     endtask //automatic test
 
     task pst_test();
-        $stop;
     endtask
 endclass //router_agent

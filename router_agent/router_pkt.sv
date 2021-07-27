@@ -6,7 +6,7 @@
  > Created Time: Mon 19 Jul 2021 02:00:23 PM CST
  ************************************************************************/
  
-`include "router_defines.sv"
+`include "defines.vh"
 
 class router_pkt;
 

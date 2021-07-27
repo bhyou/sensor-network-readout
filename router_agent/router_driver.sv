@@ -6,7 +6,8 @@
  > Created Time: Mon 19 Jul 2021 02:06:07 PM CST
  ************************************************************************/
  
- `include "router_defines.sv"
+`include "defines.vh"
+//`include "packet.sv"
 
 class router_driver;
 
@@ -31,7 +32,7 @@ class router_driver;
     endtask // transmot_a_flit
 
     virtual task automatic transmot_a_packet();
-        router_pkt               drvPkt ;
+        packet                   drvPkt ;
         logic [`flitWidth-1:0]   flitTmp;
 
         inBox.get(drvPkt);

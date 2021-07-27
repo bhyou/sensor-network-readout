@@ -5,8 +5,8 @@
  > Mail        : bhyou@foxmail.com 
  > Created Time: Mon 19 Jul 2021 10:12:36 AM CST
  ************************************************************************/
-`include "router_defines.sv"
- 
+`include "defines.vh"
+
 interface router_inf (input bit clk, rst);
     logic [`flitWidth-1:0]    out_flit_o;
     logic                     out_vld_o;
@@ -16,7 +16,7 @@ interface router_inf (input bit clk, rst);
     logic                     in_vld_i;
     logic                     in_rdy_o;
 
-    clocking mcb @(posedge clk);:wq
+    clocking mcb @(posedge clk);
         default input #1 output #1;
         output     out_flit_o;
         output     out_vld_o;

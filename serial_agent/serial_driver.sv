@@ -5,7 +5,7 @@
  > Mail        : bhyou@foxmail.com 
  > Created Time: Fri 02 Jul 2021 03:31:08 PM CST
  ************************************************************************/
-`include "defines.sv" 
+`include "defines.vh" 
 class serial_driver;
 
     virtual serial_inf.master  driverInf    ;
@@ -55,7 +55,7 @@ class serial_driver;
 
 
     virtual task automatic transmit_a_packet(input bit senderRdy, receiverRdy, frameFmt);
-        serail_pkt               drv_pkt;
+        packet               drv_pkt;
         logic [`flitWidth-1:0]   flitTmp;
 
         receivePktMbx.get(drv_pkt);
@@ -63,7 +63,7 @@ class serial_driver;
         flitTmp = drv_pkt.get_head_flit();
         transmit_a_frame(senderRdy, receiverRdy, frameFmt, flitTmp);
         foreach(drv_pkt.payload[index]) begin
-            flitTmp = {2'b00,drv_pkt.payload[index]};
+            flitTmp = {`DATA,drv_pkt.payload[index]};
             transmit_a_frame(senderRdy, receiverRdy, frameFmt, flitTmp);
         end
         flitTmp = drv_pkt.get_tail_flit();

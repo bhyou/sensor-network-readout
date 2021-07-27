@@ -5,7 +5,7 @@
  > Mail        : bhyou@foxmail.com 
  > Created Time: Fri 16 Jul 2021 10:09:26 AM CST
  ************************************************************************/
-`include "serial_defines.sv"
+`include "defines.vh"
  
 class serial_monitor;
     virtual serial_inf.monitor     monitorInf;
@@ -22,7 +22,7 @@ class serial_monitor;
     endtask // receive_a_bit
 
     virtual task automatic receive_a_flit(output logic [`flitWidth-1:0] flit);
-        for(int idx = `flitWidth; idx > 0, idx --) begin 
+        for(int idx = `flitWidth; idx > 0; idx --) begin 
             receive_a_bit(flit[idx-1]); 
         end
     endtask // receive_a_flit
@@ -32,13 +32,13 @@ class serial_monitor;
         bit                    isStart;
         bit                    isStop ;
         // frame format: 0 --> exchange ready status; 1 --> exchange data 
-        bit                    frameFmt; 
+        // bit                    frameFmt; 
         logic [`flitWidth-1:0] flitTmp ;
 
         receive_a_bit(isStart);
         if(isStart == `StartBit) begin
             receive_a_bit(frameFmt);
-            if(frameFmt == `InfoFormat) begin 
+            if(frameFmt == `InfoFrame) begin 
                 receive_a_bit(senderRdy);
                 receive_a_bit(receiverRdy);
                 flitTmp = {senderRdy,receiverRdy, {`flitWidth-2{1'b0}}};
@@ -55,14 +55,15 @@ class serial_monitor;
         end
     endtask // receive_a_frame
 
-    virtual task serial_pkt receive_a_packet(output logic senderRdy, receiverRdy);
-        serial_pkt  recvPkt = new;
-        logic [`flitWidth-1:0] flitTmp;
+    virtual task receive_a_packet(output logic senderRdy, receiverRdy);
+        logic [`flitWidth-1:0] flitTmp ;
         logic                  frameFmt;
         int                    index   ;
+        packet                 recvPkt ;
 
         forever begin 
-            receive_a_flit(frameFmt, flitTmp, senderRdy,receiverRdy);
+            recvPkt = new;
+            receive_a_frame(frameFmt, flitTmp, senderRdy,receiverRdy);
             if(frameFmt != `InfoFrame) begin
                 if(flitTmp[(`flitWidth-1) -: 2]==`SoF_flag) begin
                     index = 0;
@@ -80,7 +81,7 @@ class serial_monitor;
                         recvPkt.padload[index] = flitTmp[27:0];
                         index ++;
                     end else begin
-                        $fatal("the format of received pakcet is error!")
+                        $fatal("the format of received pakcet is error!");
                     end
                 end
             end else begin
