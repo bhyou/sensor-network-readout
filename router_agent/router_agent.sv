@@ -30,7 +30,7 @@ class router_agent;
 
     virtual task automatic  pre_test();
         gen2drv = new();
-        mon2scb = new();
+//        mon2scb = new();
         drv2scb = new();
         drv = new(drvInf, gen2drv, drv2scb);
 //        mon = new(mon2scb);
@@ -39,7 +39,7 @@ class router_agent;
     task automatic test();
         fork
             drv.transmit_a_packet();
-            mon.receive_a_packet();
+//            mon.receive_a_packet();
         join_none
     endtask //automatic test
 

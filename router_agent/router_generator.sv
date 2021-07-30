@@ -16,6 +16,7 @@ class router_generator;
         packet  trns = new;
         assert(trns.randomize()) 
         else $display("randomize failed!");
+        trns.timestamp = $time;
         gen2drv.put(trns);
     endtask //automatic createTrns
 endclass

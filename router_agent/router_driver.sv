@@ -22,16 +22,16 @@ class router_driver;
 
     virtual task automatic transmot_a_flit(logic [`flitWidth-1:0] flit);
         @(drvInf.mcb);
-        if(drvInf.out_rdy_i) begin
-            drvInf.out_flit_o = flit;
-            drvInf.out_vld_o = 1'b1;
+        if(drvInf.mcb.out_rdy_i) begin
+            drvInf.mcb.out_flit_o <= flit;
+            drvInf.mcb.out_vld_o <= 1'b1;
         end else begin
-            drvInf.out_flit_o = '0;
-            drvInf.out_vld_o =  '0;
+            drvInf.mcb.out_flit_o <= '0;
+            drvInf.mcb.out_vld_o <=  '0;
         end
     endtask // transmot_a_flit
 
-    virtual task automatic transmot_a_packet();
+    virtual task automatic transmit_a_packet();
         packet                   drvPkt ;
         logic [`flitWidth-1:0]   flitTmp;
 
@@ -39,11 +39,11 @@ class router_driver;
         outBox.put(drvPkt);
         flitTmp = drvPkt.get_head_flit();
         transmot_a_flit(flitTmp);
-        foreach(padload[index]) begin
-            flitTmp = {`DATA, drvPkt.padload[index]};
+        foreach(drvPkt.payload[index]) begin
+            flitTmp = {`DATA, drvPkt.payload[index]};
             transmot_a_flit(flitTmp);
         end
-        flitTmp = drv_pkt.get_tail_flit();
+        flitTmp = drvPkt.get_tail_flit();
         transmot_a_flit(flitTmp);
     endtask // transmot_a_packet
 

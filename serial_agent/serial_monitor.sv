@@ -69,23 +69,23 @@ class serial_monitor;
                     index = 0;
                     recvPkt.destX = flitTmp[`flitWidth-3 -: `addrWidth];
                     recvPkt.destY = flitTmp[`flitWidth-`addrWidth-3 -: `addrWidth];
-                    recvPkt.networkID = flitTmp[`flitWidth-2*`addrWidth-3];
-                    recvPkt.packetType = flitTmp[`flitWidth-2*`addrWidth-4 -: `pktTpWidth];
+                    recvPkt.netID = flitTmp[`flitWidth-2*`addrWidth-3];
+                    recvPkt.packetType = flitTmp[`flitWidth-`addrWidth*2-4 -: `pktTpWidth];
                 end else if(flitTmp[`flitWidth-1 -:2] == `EoF_flag)begin
                     recvPkt.sourceX = flitTmp[`flitWidth-3 -: `addrWidth];
                     recvPkt.sourceY = flitTmp[`flitWidth-`addrWidth-3 -:`addrWidth];
-                    recvPkt.timeStampe = flitTmp[`flitWidth-`addrWidth*2-3:0];
+                    recvPkt.timestamp = flitTmp[`flitWidth-`addrWidth*2-3:0];
                     outBox.put(recvPkt);
                 end else begin
                     if(flitTmp[`flitWidth-1 -: 2]==0) begin
-                        recvPkt.padload[index] = flitTmp[27:0];
+                        recvPkt.payload[index] = flitTmp[27:0];
                         index ++;
                     end else begin
                         $fatal("the format of received pakcet is error!");
                     end
                 end
             end else begin
-                $warnig("the format of received pakcet is info frame!");
+                $warning("the format of received pakcet is info frame!");
             end
         end
         

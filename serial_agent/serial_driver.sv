@@ -14,13 +14,13 @@ class serial_driver;
 
     function new(mailbox in_mbx,out_mbx, virtual serial_inf.master driverInf);
         this.receivePktMbx    = in_mbx ;
-        this.transmitPktMbx   = out_bx;
+        this.transmitPktMbx   = out_mbx;
         this.driverInf        = driverInf;
     endfunction //new()
 
     virtual task automatic transmit_a_bit(input bit bitValue);
-        mcb.serial_tx = bitValue;
-        @(mcb);
+        driverInf.mcb.serial_tx <= bitValue;
+        @(driverInf.mcb);
     endtask 
 
     virtual task automatic transmit_a_flit(input bit[`flitWidth-1:0]  flit);
@@ -43,7 +43,7 @@ class serial_driver;
 
     virtual task automatic transmit_a_frame (input bit senderRdy, receiverRdy, frameFmt, input bit[29:0] flit);
         transmit_a_bit(`StartBit);
-        transmit_a_bit(frmaeFmt);  // frame format bit
+        transmit_a_bit(frameFmt);  // frame format bit
         if(frameFmt == `InfoFrame) begin 
             transmit_status_info(senderRdy, receiverRdy);
         end
